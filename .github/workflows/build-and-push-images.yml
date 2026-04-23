@@ -132,7 +132,7 @@ jobs:
           kubectl create secret docker-registry ghcr-pull-secret \
             --docker-server=ghcr.io \
             --docker-username="${{ steps.vars.outputs.repo_owner }}" \
-            --docker-password="${{ secrets.ACCESS_TOKEN || github.token }}" \
+            --docker-password="${{ secrets.GHCT_TOKEN || github.token }}" \
             --docker-email=actions@github.com \
             --dry-run=client -o yaml | kubectl apply -n "$K8S_NAMESPACE" -f -
 
