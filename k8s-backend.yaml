@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: calculator-backend
+  labels:
+    app: calculator-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: calculator-backend
+  template:
+    metadata:
+      labels:
+        app: calculator-backend
+    spec:
+      containers:
+        - name: calculator-backend
+          image: ghcr.io/veryoriginalik/calculator-backend:latest
+          ports:
+            - containerPort: 5001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: calculator-backend
+spec:
+  type: ClusterIP
+  selector:
+    app: calculator-backend
+  ports:
+    - protocol: TCP
+      port: 5001
+      targetPort: 5001
