@@ -141,19 +141,19 @@ jobs:
         with:
           commit_message: "ci: update k8s manifests to image tag ${{ steps.vars.outputs.image_tag }}"
           branch: ${{ github.ref_name }}
-          file_pattern: "deployment/backend/backend.yaml deployment/frontend/frontend.yaml deployment/backend/database.yaml"
+          file_pattern: "backend/backend.yaml frontend/frontend.yaml"
 
       - name: Deploy to Kubernetes
         run: |
           set -euo pipefail
           export KUBECONFIG=$HOME/.kube/config
 
-          kubectl apply -f deployment/backend/backend.yaml
-          kubectl apply -f deployment/frontend/frontend.yaml
+          kubectl apply -f backend/backend.yaml
+          kubectl apply -f frontend/frontend.yaml
 
-          kubectl rollout status deployment/vizsgaremek-etterem-backend -n "$K8S_NAMESPACE" --timeout=300s &
+          kubectl rollout status vizsgaremek-etterem-backend -n "$K8S_NAMESPACE" --timeout=300s &
           p1=$!
-          kubectl rollout status deployment/vizsgaremek-etterem-frontend -n "$K8S_NAMESPACE" --timeout=300s &
+          kubectl rollout status vizsgaremek-etterem-frontend -n "$K8S_NAMESPACE" --timeout=300s &
           p2=$!
 
           wait $p1
