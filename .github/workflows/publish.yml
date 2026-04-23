@@ -1,0 +1,45 @@
+name: Docker Image CI & publis to K8S
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: genarate image tag
+      run: |
+        echo "IMAGE_TAG=$(date +%s)" >> $GITHUB_ENV
+
+
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      run: |
+        docker login ghcr.io -u luo-hong-jun -p ${{ secrets.GHCT_TOKEN }}
+        docker build ./GugyakEsMacskak --file ./GugyakEsMacskak/Dockerfile --tag ghcr.io/luo-hong-jun/allatok-frontend:$IMAGE_TAG
+        docker push ghcr.io/luo-hong-jun/allatok-frontend:$IMAGE_TAG
+        docker build ./gugyamacskabackend --file ./gugyamacskabackend/Dockerfile --tag ghcr.io/luo-hong-jun/allatok-backend:$IMAGE_TAG
+        docker push ghcr.io/luo-hong-jun/allatok-backend:$IMAGE_TAG
+
+        sed -i 's|image: ghcr.io/luo-hong-jun/allatok-frontend:.*|image: ghcr.io/luo-hong-jun/allatok-frontend:'"$IMAGE_TAG"'|' deployment.yaml
+        sed -i 's|image: ghcr.io/luo-hong-jun/allatok-backend:.*|image: ghcr.io/luo-hong-jun/allatok-backend:'"$IMAGE_TAG"'|' deployment.yaml
+        git config --global user.name "Luo-Hong-Jun"
+        git config --global user.email "luo.hong.jun@students.jedlik.eu"
+
+        git add deployment.yaml
+        git commit -m "update K8S image tag in deployment.yaml"
+        git push
+
+        mkdir -p ~/.kube
+        echo "${{ secrets.JEDLIK_K8S_CONFIG }}" | base64 -d > ~/.kube/config
+        kubectl apply -f ./deployment.yaml
