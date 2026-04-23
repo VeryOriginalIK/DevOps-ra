@@ -148,12 +148,12 @@ jobs:
           set -euo pipefail
           export KUBECONFIG=$HOME/.kube/config
 
-          kubectl apply -f calculator_backend/compose.yaml
-          kubectl apply -f calculator/compose.yaml
+          kubectl apply -f k8s-backend.yaml
+          kubectl apply -f k8s-frontend.yaml
 
-          kubectl rollout status calculator-backend -n "$K8S_NAMESPACE" --timeout=300s &
+          kubectl rollout status deployment/calculator-backend -n "$K8S_NAMESPACE" --timeout=300s &
           p1=$!
-          kubectl rollout status calculator -n "$K8S_NAMESPACE" --timeout=300s &
+          kubectl rollout status deployment/calculator-frontend -n "$K8S_NAMESPACE" --timeout=300s &
           p2=$!
 
           wait $p1

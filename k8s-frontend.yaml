@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: calculator-frontend
+  labels:
+    app: calculator-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: calculator-frontend
+  template:
+    metadata:
+      labels:
+        app: calculator-frontend
+    spec:
+      containers:
+        - name: calculator-frontend
+          image: ghcr.io/veryoriginalik/calculator-frontend:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: REACT_APP_API_URL
+              value: "https://calculator_backend.jcloud.jedlik.cloud/api/calculate"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: calculator-frontend
+spec:
+  type: ClusterIP
+  selector:
+    app: calculator-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
