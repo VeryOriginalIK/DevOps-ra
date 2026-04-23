@@ -54,31 +54,27 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to calculator.jcloud.jedlik.cloud
+      # Replace the TWO login actions with this SINGLE action for GHCR
+      - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
-          registry: calculator.jcloud.jedlik.cloud
+          registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GHCT_TOKEN }}
-
-      - name: Log in to calculator-backend.jcloud.jedlik.cloud
-        uses: docker/login-action@v3
-        with:
-          registry: calculator-backend.jcloud.jedlik.cloud
-          username: ${{ github.actor }}
-          password: ${{ secrets.GHCT_TOKEN }}
+          # Ensure this secret is correct. Often you can just use ${{ github.token }}
+          password: ${{ secrets.GHCT_TOKEN }} 
 
       - name: Build, tag, and push images
         run: |
           SERVICE=${{ matrix.service }}
           TAG=${{ steps.vars.outputs.image_tag }}
-          if [ "$SERVICE" = "frontend" ]; then
-            REGISTRY=calculator.jcloud.jedlik.cloud
-          else
-            REGISTRY=calculator-backend.jcloud.jedlik.cloud
-          fi
-          IMAGE=$REGISTRY/$SERVICE:$TAG
-          IMAGE_LATEST=$REGISTRY/$SERVICE:latest
+          OWNER=${{ steps.vars.outputs.repo_owner }}
+          
+          # Set the registry to GHCR
+          REGISTRY=ghcr.io/$OWNER
+          
+          IMAGE=$REGISTRY/calculator-$SERVICE:$TAG
+          IMAGE_LATEST=$REGISTRY/calculator-$SERVICE:latest
+          
           docker build -t $IMAGE -t $IMAGE_LATEST ./$SERVICE
           docker push $IMAGE
           docker push $IMAGE_LATEST
