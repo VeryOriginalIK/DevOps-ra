@@ -121,12 +121,11 @@ jobs:
       - name: Update k8s manifests with new image tag
         run: |
           OWNER="${{ steps.vars.outputs.repo_owner }}"
-          TAG="${{ steps.vars.outputs.image_tag }}"0
+          TAG="${{ steps.vars.outputs.image_tag }}"
 
-          # Update backend, frontend, manifests.
-          sed -i -E "s|(ghcr.io/${OWNER}/calculator-backend):[a-zA-Z0-9_.-]+|\\1:${TAG}|g" deployment/calculator_backend/compose.yaml
-          sed -i -E "s|(ghcr.io/${OWNER}/calculator-frontend):[a-zA-Z0-9_.-]+|\\1:${TAG}|g" deployment/calculator/compose.yaml
-
+          # Update backend and frontend compose files.
+          sed -i -E "s|(ghcr.io/${OWNER}/calculator-backend):[a-zA-Z0-9_.-]+|\1:${TAG}|g" calculator_backend/compose.yaml
+          sed -i -E "s|(ghcr.io/${OWNER}/calculator-frontend):[a-zA-Z0-9_.-]+|\1:${TAG}|g" calculator/compose.yaml
       - name: Ensure/refresh ghcr-pull-secret
         run: |
           export KUBECONFIG=$HOME/.kube/config
