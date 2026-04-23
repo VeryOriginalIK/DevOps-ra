@@ -121,11 +121,11 @@ jobs:
       - name: Update k8s manifests with new image tag
         run: |
           OWNER="${{ steps.vars.outputs.repo_owner }}"
-          TAG="${{ steps.vars.outputs.image_tag }}"
+          TAG="${{ steps.vars.outputs.image_tag }}"0
 
           # Update backend, frontend, manifests.
-          sed -i -E "s|(ghcr.io/${OWNER}/calculator-backend):[a-zA-Z0-9_.-]+|\\1:${TAG}|g" deployment/calculator/compose.yaml
-          sed -i -E "s|(ghcr.io/${OWNER}/calculator-frontend):[a-zA-Z0-9_.-]+|\\1:${TAG}|g" deployment/calculator-backend/compose.yaml
+          sed -i -E "s|(ghcr.io/${OWNER}/calculator-backend):[a-zA-Z0-9_.-]+|\\1:${TAG}|g" deployment/calculator_backend/compose.yaml
+          sed -i -E "s|(ghcr.io/${OWNER}/calculator-frontend):[a-zA-Z0-9_.-]+|\\1:${TAG}|g" deployment/calculator/compose.yaml
 
       - name: Ensure/refresh ghcr-pull-secret
         run: |
@@ -151,15 +151,11 @@ jobs:
 
           kubectl apply -f deployment/backend/backend.yaml
           kubectl apply -f deployment/frontend/frontend.yaml
-          kubectl apply -f deployment/backend/database.yaml
 
           kubectl rollout status deployment/vizsgaremek-etterem-backend -n "$K8S_NAMESPACE" --timeout=300s &
           p1=$!
           kubectl rollout status deployment/vizsgaremek-etterem-frontend -n "$K8S_NAMESPACE" --timeout=300s &
           p2=$!
-          kubectl rollout status deployment/vizsgaremek-etterem-adatbazis -n "$K8S_NAMESPACE" --timeout=300s &
-          p3=$!
 
           wait $p1
           wait $p2
-          wait $p3
