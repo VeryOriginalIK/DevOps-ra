@@ -141,19 +141,19 @@ jobs:
         with:
           commit_message: "ci: update k8s manifests to image tag ${{ steps.vars.outputs.image_tag }}"
           branch: ${{ github.ref_name }}
-          file_pattern: "backend/compose.yaml frontend/frontend.yaml"
+          file_pattern: "calculator_backend/compose.yaml calculator/compose.yaml"
 
       - name: Deploy to Kubernetes
         run: |
           set -euo pipefail
           export KUBECONFIG=$HOME/.kube/config
 
-          kubectl apply -f backend/compose.yaml
-          kubectl apply -f frontend/frontend.yaml
+          kubectl apply -f calculator_backend/compose.yaml
+          kubectl apply -f calculator/compose.yaml
 
-          kubectl rollout status vizsgaremek-etterem-backend -n "$K8S_NAMESPACE" --timeout=300s &
+          kubectl rollout status calculator-backend -n "$K8S_NAMESPACE" --timeout=300s &
           p1=$!
-          kubectl rollout status vizsgaremek-etterem-frontend -n "$K8S_NAMESPACE" --timeout=300s &
+          kubectl rollout status calculator -n "$K8S_NAMESPACE" --timeout=300s &
           p2=$!
 
           wait $p1
