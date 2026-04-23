@@ -67,24 +67,24 @@ jobs:
           TAG=${{ steps.vars.outputs.image_tag }}
           OWNER=${{ steps.vars.outputs.repo_owner }}
           
-          # Set the registry to GHCR
+          # 1. Define build context based on the current matrix service FIRST
+          if [ "$SERVICE" = "frontend" ]; then
+            CONTEXT=./calculator
+          else
+            CONTEXT=./calculator_backend
+          fi
+          
+          # 2. Set the registry to GHCR
           REGISTRY=ghcr.io/$OWNER
           
+          # 3. Construct image names
           IMAGE=$REGISTRY/calculator-$SERVICE:$TAG
           IMAGE_LATEST=$REGISTRY/calculator-$SERVICE:latest
           
+          # 4. Build and push (Now $CONTEXT has a value!)
           docker build -t $IMAGE -t $IMAGE_LATEST $CONTEXT
           docker push $IMAGE
           docker push $IMAGE_LATEST
-          SERVICE=${{ matrix.service }}
-          TAG=${{ steps.vars.outputs.image_tag }}
-          if [ "$SERVICE" = "frontend" ]; then
-            REGISTRY=calculator.jcloud.jedlik.cloud
-            CONTEXT=./calculator
-          else
-            REGISTRY=calculator_backend.jcloud.jedlik.cloud
-            CONTEXT=./calculator_backend
-          fi
 
   verify-pull-secret:
     name: Verify/Create GHCR imagePullSecret
