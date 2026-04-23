@@ -4,14 +4,14 @@ services:
     build:
       context: ./calculator
     environment:
-      - REACT_APP_API_URL=http://localhost:5001/api/calculate
+      - REACT_APP_API_URL=http://calculator-backend.jcloud.jedlik.cloud:5001
     ports:
       - 3000:3000
     depends_on:
       - backend
   backend:
     build:
-      context: ./calculator_backend
+      context: ./calculator-backend
     ports:
       - 5001:5001
     environment:

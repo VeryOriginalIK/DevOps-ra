@@ -61,10 +61,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCT_TOKEN }}
 
-      - name: Log in to calculator_backend.jcloud.jedlik.cloud
+      - name: Log in to calculator-backend.jcloud.jedlik.cloud
         uses: docker/login-action@v3
         with:
-          registry: calculator_backend.jcloud.jedlik.cloud
+          registry: calculator-backend.jcloud.jedlik.cloud
           username: ${{ github.actor }}
           password: ${{ secrets.GHCT_TOKEN }}
 
@@ -75,7 +75,7 @@ jobs:
           if [ "$SERVICE" = "frontend" ]; then
             REGISTRY=calculator.jcloud.jedlik.cloud
           else
-            REGISTRY=calculator_backend.jcloud.jedlik.cloud
+            REGISTRY=calculator-backend.jcloud.jedlik.cloud
           fi
           IMAGE=$REGISTRY/$SERVICE:$TAG
           IMAGE_LATEST=$REGISTRY/$SERVICE:latest
@@ -122,7 +122,7 @@ jobs:
 
           # Update backend, frontend, manifests.
           sed -i -E "s|(ghcr.io/${OWNER}/calculator-backend):[a-zA-Z0-9_.-]+|\\1:${TAG}|g" deployment/calculator/compose.yaml
-          sed -i -E "s|(ghcr.io/${OWNER}/calculator-frontend):[a-zA-Z0-9_.-]+|\\1:${TAG}|g" deployment/calculator_backend/compose.yaml
+          sed -i -E "s|(ghcr.io/${OWNER}/calculator-frontend):[a-zA-Z0-9_.-]+|\\1:${TAG}|g" deployment/calculator-backend/compose.yaml
 
       - name: Ensure/refresh ghcr-pull-secret
         run: |

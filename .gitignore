@@ -34,4 +34,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-/calculator_backend/node_modules
+/calculator-backend/node_modules
