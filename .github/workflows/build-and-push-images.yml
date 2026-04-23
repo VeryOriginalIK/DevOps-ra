@@ -54,13 +54,11 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # Replace the TWO login actions with this SINGLE action for GHCR
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          # Ensure this secret is correct. Often you can just use ${{ github.token }}
           password: ${{ secrets.GHCT_TOKEN }} 
 
       - name: Build, tag, and push images
@@ -75,9 +73,18 @@ jobs:
           IMAGE=$REGISTRY/calculator-$SERVICE:$TAG
           IMAGE_LATEST=$REGISTRY/calculator-$SERVICE:latest
           
-          docker build -t $IMAGE -t $IMAGE_LATEST ./$SERVICE
+          docker build -t $IMAGE -t $IMAGE_LATEST $CONTEXT
           docker push $IMAGE
           docker push $IMAGE_LATEST
+          SERVICE=${{ matrix.service }}
+          TAG=${{ steps.vars.outputs.image_tag }}
+          if [ "$SERVICE" = "frontend" ]; then
+            REGISTRY=calculator.jcloud.jedlik.cloud
+            CONTEXT=./calculator
+          else
+            REGISTRY=calculator_backend.jcloud.jedlik.cloud
+            CONTEXT=./calculator_backend
+          fi
 
   verify-pull-secret:
     name: Verify/Create GHCR imagePullSecret
@@ -96,7 +103,7 @@ jobs:
       - name: Decode KUBECONFIG
         run: |
           mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBECONFIG }}" | base64 --decode > $HOME/.kube/config
+          echo "${{ secrets.JEDLIK_K8S_CONFIG }}" | base64 --decode > $HOME/.kube/config
           chmod 600 $HOME/.kube/config
 
       - name: Prepare deploy variables
