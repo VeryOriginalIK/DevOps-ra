@@ -126,6 +126,10 @@ jobs:
           # Update backend and frontend compose files.
           sed -i -E "s|(ghcr.io/${OWNER}/calculator-backend):[a-zA-Z0-9_.-]+|\1:${TAG}|g" calculator_backend/compose.yaml
           sed -i -E "s|(ghcr.io/${OWNER}/calculator-frontend):[a-zA-Z0-9_.-]+|\1:${TAG}|g" calculator/compose.yaml
+
+          # Update backend and frontend k8s manifests.
+          sed -i -E "s|(ghcr.io/${OWNER}/calculator-backend):[a-zA-Z0-9_.-]+|\1:${TAG}|g" k8s-backend.yaml
+          sed -i -E "s|(ghcr.io/${OWNER}/calculator-frontend):[a-zA-Z0-9_.-]+|\1:${TAG}|g" k8s-frontend.yaml
       - name: Ensure/refresh ghcr-pull-secret
         run: |
           export KUBECONFIG=$HOME/.kube/config
@@ -141,7 +145,7 @@ jobs:
         with:
           commit_message: "ci: update k8s manifests to image tag ${{ steps.vars.outputs.image_tag }}"
           branch: ${{ github.ref_name }}
-          file_pattern: "calculator_backend/compose.yaml calculator/compose.yaml"
+          file_pattern: "calculator_backend/compose.yaml calculator/compose.yaml k8s-backend.yaml k8s-frontend.yaml"
 
       - name: Deploy to Kubernetes
         run: |
