@@ -29,7 +29,7 @@ const [value, setValue] = useState('');
             <input type="text" value={value} />
           </div>
           {<div>
-            {/* <input type="button" value="AC" onClick={(e) => setValue("")} />
+            <input type="button" value="AC" onClick={(e) => setValue("")} />
             <input
               type="button"
               value="DE"
@@ -39,7 +39,7 @@ const [value, setValue] = useState('');
               type="button"
               value="."
               onClick={(e) => setValue(value + e.target.value)}
-            /> */}
+            />
             <input
               type="button"
               value="/"
