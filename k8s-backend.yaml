@@ -18,7 +18,7 @@ spec:
         - name: ghcr-pull-secret
       containers:
         - name: calculator-backend
-          image: ghcr.io/veryoriginalik/calculator-backend:08ba9e4
+          image: ghcr.io/veryoriginalik/calculator-backend:b7b2b93
           ports:
             - containerPort: 5001
 ---
