@@ -14,6 +14,8 @@ spec:
       labels:
         app: calculator-backend
     spec:
+      imagePullSecrets:
+        - name: ghcr-pull-secret
       containers:
         - name: calculator-backend
           image: ghcr.io/veryoriginalik/calculator-backend:latest
