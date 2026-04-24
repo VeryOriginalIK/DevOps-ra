@@ -37,3 +37,42 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 3000
+
+---
+# Ingress resource to expose frontend at calculator.jcloud.jedlik.cloud
+---
+# Ingress resource to expose frontend and backend at custom domains
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: calculator-frontend-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - calculator.jcloud.jedlik.cloud
+        - calculator-backend.jcloud.jedlik.cloud
+      secretName: calculator-certificate
+  rules:
+    - host: calculator.jcloud.jedlik.cloud
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: calculator-frontend
+                port:
+                  number: 80
+    - host: calculator-backend.jcloud.jedlik.cloud
+      http:
+        paths:
+          - path: /api/calculate
+            pathType: Prefix
+            backend:
+              service:
+                name: calculator-backend
+                port:
+                  number: 5001
