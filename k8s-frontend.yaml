@@ -23,7 +23,7 @@ spec:
             - containerPort: 3000
           env:
             - name: REACT_APP_API_URL
-              value: "https://calculator_backend.jcloud.jedlik.cloud/api/calculate"
+              value: "http://calculator_backend.jcloud.jedlik.cloud/api/calculate"
 ---
 apiVersion: v1
 kind: Service
